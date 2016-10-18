@@ -14,15 +14,6 @@ odoo.define('add_product_to_cart_by_ajax.tracking', function(require) {
                 $("sup.my_cart_quantity").parent().parent().removeClass('hidden');
             });
         });
-            
-          
-          
-          
-          
-          
+        
     });
-    
 });
-
-
-    

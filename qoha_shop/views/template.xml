@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	    
+    <template id='website_sale.bill_to' name="Bill to">
+        <div class="panel panel-info hidden">
+          <div class="panel-heading">Bill To:</div>
+          <div class="panel-body">
+            <div t-field="order.partner_invoice_id" t-options="{'widget': 'contact','fields': ['address', 'name', 'phone', 'email']}" />
+          </div>
+        </div>
+        <t t-if="not order.only_services">
+            <div class="panel panel-info">
+              <div class="panel-heading">Ship To:</div>
+              <div class="panel-body">
+                <div t-field="order.partner_shipping_id" t-options="{'widget': 'contact','fields': ['address', 'name', 'phone']}" />
+              </div>
+            </div>
+        </t>
+    </template>
+	     
+	     
+	     
+	     
+    <template id="website_sale.checkout">
+        <t t-call="website.layout">
+            <t t-set="additional_title">Shop - Checkout</t>
+            <div id="wrap">
+                <div class="container oe_website_sale">
+                    <t t-call="website_sale.wizard_checkout">
+                        <t t-set="step" t-value="20" />
+                    </t>
+                    <t t-set="same_shipping" t-value="bool(order.partner_shipping_id==order.partner_id or only_services)" />
+                    <div class="row">
+                        <div class="col-md-8 oe_cart">
+                            <div class="row hidden">
+                                <div class="col-md-12">
+                                    <h3 class="page-header mt16">Billing Address</h3>
+                                </div>
+                                <div class="col-md-6 one_kanban">
+                                    <t t-call="website_sale.address_kanban">
+                                        <t t-set='contact' t-value="order.partner_id"/>
+                                        <t t-set='selected' t-value="1"/>
+                                        <t t-set='readonly' t-value="1"/>
+                                    </t>
+                                </div>
+                            </div>
+                            <t t-if="not only_services">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h3 class="page-header mt16">Shipping Address
+                                        </h3>
+                                    </div>
+                                </div>
+                                <div class="row all_shipping">
+                                    <div class="col-md-12">
+                                        <div class="row mt8">
+                                            <div class="col-sm-12 col-md-12 one_kanban">
+                                                <form action="/shop/address" method="post" class=''>
+                                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+                                                    <a class='a-submit btn btn-default mb16 btn-block'>
+                                                        <i class="fa fa-plus-square" aria-hidden="true"></i> Add an address
+                                                    </a>
+                                                </form>
+                                            </div>
+                                            <t t-foreach="shippings" t-as="ship">
+                                                <div class="col-sm-12 col-md-6 one_kanban">
+                                                    <t t-call="website_sale.address_kanban">
+                                                        <t t-set='contact' t-value="ship"/>
+                                                        <t t-set='selected' t-value="order.partner_shipping_id==ship"/>
+                                                        <t t-set='readonly' t-value="bool(len(shippings)==1)"/>
+                                                        <t t-set='edit_billing' t-value="bool(ship==order.partner_id)"/>
+                                                    </t>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                            <div class="clearfix" />
+                            <div>
+                                <a href="/shop/cart" class="btn btn-default mb32">
+                                    <span class="fa fa-long-arrow-left" /> Return to Cart</a>
+                                    <a class="btn btn-default btn-primary pull-right mb32 " href="/shop/confirm_order">Confirm old <span class="fa fa-long-arrow-right" /></a>
+                                    
+                                    <form target="_self" action="/qoha_shop/confirm_order" method="post" class="pull-right">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+                                        <button style="width:127px;" class="btn btn-primary submit">
+                                            <span t-if="order.amount_total &gt; 0">Done <span class="fa fa-long-arrow-right"></span></span>
+                                            <span t-if="order.amount_total == 0">Confirm Order <span class="fa fa-long-arrow-right"></span></span>
+                                        </button>
+                                    </form>
+                                    
+                            </div>
+                        </div>
+                        <div class="col-lg-offset-1 col-md-3 text-muted">
+                            <h3 class="page-header mt16">Your Order</h3>
+                            <t t-set="website_sale_order" t-value="website.sale_get_order()" />
+                            <t t-call="website_sale.total" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+	     
+    
+</odoo>
