@@ -80,8 +80,9 @@
                             <div>
                                 <a href="/shop/cart" class="btn btn-default mb32">
                                     <span class="fa fa-long-arrow-left" /> Return to Cart</a>
+                                    <!-- 
                                     <a class="btn btn-default btn-primary pull-right mb32 " href="/shop/confirm_order">Confirm old <span class="fa fa-long-arrow-right" /></a>
-                                    
+                                     -->
                                     <form target="_self" action="/qoha_shop/confirm_order" method="post" class="pull-right">
                                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
                                         <button style="width:127px;" class="btn btn-primary submit">
