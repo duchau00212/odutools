@@ -86,7 +86,9 @@
                                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
                                         <button style="width:127px;" class="btn btn-primary submit">
                                             <span t-if="order.amount_total &gt; 0">Done <span class="fa fa-long-arrow-right"></span></span>
+                                            <!-- 
                                             <span t-if="order.amount_total == 0">Confirm Order <span class="fa fa-long-arrow-right"></span></span>
+                                             -->
                                         </button>
                                     </form>
                                     
