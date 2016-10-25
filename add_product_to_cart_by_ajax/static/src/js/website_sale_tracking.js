@@ -12,6 +12,7 @@ odoo.define('add_product_to_cart_by_ajax.tracking', function(require) {
             }).then(function (data) {
                 $(".my_cart_quantity").text(data.cart_quantity);
                 $("sup.my_cart_quantity").parent().parent().removeClass('hidden');
+                alert ("Bạn đã đặt hàng thành công!");
             });
         });
         
