@@ -106,5 +106,579 @@
         </t>
     </template>
 	     
+	     
+	     
+	     
+	     
+    <template id="website_sale.address" name="Address Management">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container oe_website_sale">
+                    <t t-call="website_sale.wizard_checkout">
+                        <t t-set="step" t-value="20" />
+                    </t>
+                    <div class="row">
+                        <div class="col-md-9 oe_cart">
+                            <div class="row">
+                                <t t-if="mode == ('new', 'billing')">
+                                    <h2 class="page-header mt16">Your Address
+                                        <small> or </small>
+                                        <t t-set='connect' t-value="request.env['ir.config_parameter'].sudo().get_param('auth_signup.allow_uninvited') == 'True' and ('signup', 'Sign Up') or ('login', 'Log In')"/>
+                                        <a t-attf-href='/web/{{connect[0]}}?redirect=/shop/checkout' class='btn btn-primary' style="margin-top: -11px"><t t-esc='connect[1]'/></a>
+                                    </h2>
+                                </t>
+                                <t t-if="mode == ('edit', 'billing')">
+                                    <h3 class="page-header mt16">Your Address</h3>
+                                </t>
+                                <t t-if="mode[1] == 'shipping'">
+                                    <h3 class="page-header mt16">Shipping Address </h3>
+                                </t>
+                                <t t-if="error" t-foreach="error.get('error_message', [])" t-as="err">
+                                    <h4 class="text-danger" t-esc="err" />
+                                </t>
+                                
+                                <form name="/shop/checkout" method="post" class="checkout_autoformat">
+                                    <div t-attf-class="form-group #{error.get('name') and 'has-error' or ''} col-md-12 div_name">
+                                        <label class="control-label" for="name">Name</label>
+                                        <input type="text" name="name" class="form-control" t-att-value="'name' in checkout and checkout['name']" />
+                                    </div>
+                                    <div class="clearfix" />
+                                    <t t-if="mode[1] == 'billing'">
+                                        <div t-attf-class="form-group #{error.get('email') and 'has-error' or ''} col-md-6" id="div_email">
+                                            <label class="control-label" for="email">Email</label>
+                                            <input type="tel" name="email" class="form-control" t-att-value="'email' in checkout and checkout['email']" />
+                                        </div>
+                                    </t>
+                                    <div t-attf-class="form-group #{error.get('phone') and 'has-error' or ''} col-md-6" id="div_phone">
+                                        <label class="control-label" for="phone">Phone</label>
+                                        <input type="tel" name="phone" class="form-control" t-att-value="'phone' in checkout and checkout['phone']" />
+                                    </div>
+                                    <div class="clearfix" />
+                                    <t t-if="mode == ('new', 'billing')">
+                                        <div t-attf-class="hidden form-group #{error.get('company_name') and 'has-error' or ''} col-md-6">
+                                            <label class="control-label" for="company_name">Company Name</label>
+                                            <input type="text" name="company_name" class="form-control" t-att-value="'company_name' in checkout and checkout['company_name']" />
+                                        </div>
+                                        <div t-attf-class="hidden form-group #{error.get('vat') and 'has-error' or ''} col-md-6 div_vat">
+                                            <label class="control-label" for="vat">TIN / VAT </label>
+                                            <input type="text" name="vat" class="form-control" t-att-value="'vat' in checkout and checkout['vat']" />
+                                        </div>
+                                    </t>
+                                    
+                                    <div class="clearfix" />
+                                    <div t-attf-class="form-group #{error.get('street') and 'has-error' or ''} col-md-12 div_street">
+                                        <label class="control-label" for="street">Street <span class="hidden-xs"> and Number</span></label>
+                                        <input type="text" name="street" class="form-control" t-att-value="'street' in checkout and checkout['street']" />
+                                    </div>
+                                    <div class="clearfix" />
+                                    <t t-set='zip_city' t-value='country and [x for x in country.get_address_fields() if x in ["zip", "city"]] or ["city", "zip"]'/>
+                                    <t t-if="'zip' in zip_city and zip_city.index('zip') &lt; zip_city.index('city')">
+                                        <div t-attf-class="form-group #{error.get('zip') and 'has-error' or ''} col-sm-4 div_zip">
+                                            <label class="control-label" for="zip">Zip Code</label>
+                                            <input type="text" name="zip" class="form-control" t-att-value="'zip' in checkout and checkout['zip']" />
+                                        </div>
+                                    </t>
+                                    <div t-attf-class="form-group #{error.get('city') and 'has-error' or ''} col-sm-8 div_city">
+                                        <label class="control-label" for="city">City</label>
+                                        <input type="text" name="city" class="form-control" t-att-value="'city' in checkout and checkout['city']" />
+                                    </div>
+                                    <t t-if="'zip' in zip_city and zip_city.index('zip') &gt; zip_city.index('city')">
+                                        <div t-attf-class="hidden form-group #{error.get('zip') and 'has-error' or ''} col-sm-4 div_zip">
+                                            <label class="control-label" for="zip">Zip Code</label>
+                                            <input type="text" name="zip" class="form-control" t-att-value="'zip' in checkout and checkout['zip']" />
+                                        </div>
+                                    </t>
+                                    <div t-attf-class="form-group #{error.get('country_id') and 'has-error' or ''} col-md-4 div_country">
+                                        <label class="control-label" for="country_id">Country</label>
+                                        <select id="country_id" name="country_id" class="form-control">
+                                            <option value="">Country...</option>
+                                            <t t-foreach="countries" t-as="c">
+                                                <option t-att-value="c.id" t-att-selected="c.id == (country and country.id or -1)">
+                                                    <t t-esc="c.name" />
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="clearfix" />
+                                    
+                                    <div t-attf-class="hidden form-group #{error.get('state_id') and 'has-error' or ''} col-md-6 div_state" t-att-style="(not country or not country.state_ids) and 'display: none'">
+                                        <label class="control-label" for="state_id">State / Province</label>
+                                        <select name="state_id" class="form-control" data-init="1">
+                                            <option value="">State / Province...</option>
+                                            <t t-foreach="country and country.state_ids or []" t-as="s">
+                                                <option t-att-value="s.id" t-att-selected="s.id == ('state_id' in checkout and country and checkout['state_id'] != '' and int(checkout['state_id']))">
+                                                    <t t-esc="s.name" />
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+                                    <input type="hidden" name="submitted" value="1" />
+                                    <input type="hidden" name="partner_id" t-att-value="partner_id or '0'" />
+                                    <input type="hidden" name="callback" t-att-value="callback" />
+                                    <!-- Example -->
+                                    <input type="hidden" name="field_required" t-att-value="mode[1] == 'billing' and 'phone,name' or ''" />
+
+                                    <div class="clearfix"/>
+                                    <div>
+                                        <a t-att-href="mode == ('new', 'billing') and '/shop/cart' or '/shop/checkout'" class="btn btn-default mb32">
+                                            <span class="fa fa-long-arrow-left" /> Back
+                                        </a>
+                                        <a class="btn btn-default btn-primary pull-right mb32 a-submit">
+                                            <span>Next </span><span class="fa fa-long-arrow-right" />
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 text-muted">
+                            <h3 class="page-header mt16 text-center">Your Order</h3>
+                            <t t-set="website_sale_order" t-value="website.sale_get_order()" />
+                            <t t-call="website_sale.total" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    
+    
+    
+    <template id="website_portal.details">
+        <t t-call="website.layout">
+            <t t-set="additional_title">Contact Details</t>
+            <div id="wrap">
+                <div class="container">
+                  <div class="row">
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb mt8">
+                                <li><a href="/my/home"><i class="fa fa-home"/></a></li>
+                                <li>Details</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <h1>Contact Details</h1>
+                    <form action="/my/account" method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <div class="row o_website_portal_details">
+                            <div class="col-md-8">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                      <div t-if="error_message" class="alert alert-danger">
+                                          <t t-foreach="error_message" t-as="err"><t t-esc="err"/><br /></t>
+                                      </div>
+                                    </div>
+                                    <div t-attf-class="form-group #{error.get('name') and 'has-error' or ''} col-lg-6">
+                                        <label class="control-label" for="contact_name">Your Name</label>
+                                        <input type="text" name="name" class="form-control" t-att-value="name or partner.name" />
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    
+                                    <div t-attf-class="form-group #{error.get('email') and 'has-error' or ''} col-lg-6">
+                                        <label class="control-label" for="contact_name">Email</label>
+                                        <input readonly="readonly" type="email" name="email" class="form-control" t-att-value="email or partner.email" />
+                                    </div>
+                                    <div t-attf-class="form-group #{error.get('phone') and 'has-error' or ''} col-lg-6">
+                                        <label class="control-label" for="phone">Phone</label>
+                                        <input type="tel" name="phone" class="form-control" t-att-value="phone or partner.phone" />
+                                    </div>
+
+                                    <div class="clearfix" />
+                                    <div t-attf-class="hidden form-group #{error.get('company_name') and 'has-error' or ''} col-lg-6">
+                                        <label class="control-label label-optional" for="company_name">Company Name</label>
+                                        <input type="text" name="company_name" class="form-control" t-att-value="company_name or partner.company_name"/>
+                                    </div>
+                                    <div t-if="has_check_vat" t-attf-class="hidden form-group #{error.get('vat') and 'has-error' or ''} col-lg-6">
+                                        <label class="control-label label-optional" for="vat">VAT Number</label>
+                                        <input type="text" name="vat" class="form-control" t-att-value="vat or partner.vat" />
+                                    </div>
+
+                                    <div t-attf-class="form-group #{error.get('street') and 'has-error' or ''} col-lg-12">
+                                        <label class="control-label label-optional" for="street">Street</label>
+                                        <input type="text" name="street" class="form-control" t-att-value="street or partner.street"/>
+                                    </div>
+                                    
+                                    <div class="clearfix" />
+                                    <div t-attf-class="form-group #{error.get('city') and 'has-error' or ''} col-lg-6">
+                                        <label class="control-label" for="city">City</label>
+                                        <input type="text" name="city" class="form-control" t-att-value="city or partner.city" />
+                                    </div>
+                                    
+                                    <div t-attf-class="hidden form-group #{error.get('zip') and 'has-error' or ''} col-lg-6">
+                                        <label class="control-label" for="zipcode">Zip / Postal Code</label>
+                                        <input type="text" name="zipcode" class="form-control" t-att-value="zipcode or partner.zip" />
+                                    </div>
+                                    
+                                    <div t-attf-class="form-group #{error.get('country_id') and 'has-error' or ''} col-lg-6">
+                                        <label class="control-label" for="country_id">Country</label>
+                                        <select name="country_id" class="form-control">
+                                            <option value="">Country...</option>
+                                            <t t-foreach="countries or []" t-as="country">
+                                                <option t-att-value="country.id" t-att-selected="country.id == partner.country_id.id">
+                                                    <t t-esc="country.name" />
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    
+                                    <div t-attf-class="form-group #{error.get('state_id') and 'has-error' or ''} col-lg-6">
+                                        <label class="control-label label-optional" for="state_id">State / Province</label>
+                                        <select name="state_id" class="form-control">
+                                            <option value="">select...</option>
+                                            <t t-foreach="states or []" t-as="state">
+                                                <option t-att-value="state.id" style="display:none;" t-att-data-country_id="state.country_id.id" t-att-selected="state.id == partner.state_id.id">
+                                                    <t t-esc="state.name" />
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <input type="hidden" name="redirect" t-att-value="redirect"/>
+                                </div>
+                                <div class="clearfix">
+                                    <button type="submit" class="btn btn-default btn-primary pull-right mb32 ">
+                                        Confirm
+                                        <span class="fa fa-long-arrow-right" />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+    
+    
+    
+    
+    <template id="website_portal_sale.orders_followup" name="Sales Order">
+      <t t-call="website.layout">
+        <div id="wrap">
+            <div class="container">
+              <div class="oe_structure">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <ol class="breadcrumb mt8">
+                            <li><a href="/my/home"><i class="fa fa-home"/></a></li>
+                            <li>
+                              <a t-attf-href="/my/#{'quotes' if order.state == 'sent' else 'orders'}?{{ keep_query()}}">
+                                <t t-if="order.state == 'sent'">
+                                    My Quotes
+                                </t>
+                                <t t-if="order.state != 'sent'">
+                                    My Orders
+                                </t>
+                              </a>
+                            </li>
+                            <li>
+                              <t t-if="order.state == 'sent'">
+                                  Quotation
+                              </t>
+                              <t t-if="order.state != 'sent'">
+                                  Order
+                              </t>
+                              <t t-esc="order.name"/>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+              </div>
+              <div id="optional_placeholder"></div>
+              <div class="container">
+
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <h4>
+                            <t t-if="order.state == 'sent'">
+                              Quotation
+                            </t>
+                            <t t-if="order.state != 'sent'">
+                              Order
+                            </t>
+                            <span t-esc="order.name"/>
+                           <div class="pull-right">
+	                          <strong>Date:</strong> <span t-field="order.create_date" t-options='{"widget": "date"}'/>
+	                      </div>
+                          </h4>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="panel-body">
+                      <!-- <hr/> -->
+                      <div class="mb8 hidden">
+                          <strong>Date:</strong> <span t-field="order.create_date" t-options='{"widget": "date"}'/>
+                      </div>
+                      
+                      <div class='row'>
+                      
+                        <div class="hidden col-md-6">
+                          <div>
+                            <strong>Invoicing Address</strong>
+                          </div>
+                          <div>
+                            <address t-field="order.partner_invoice_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
+                          </div>
+                          <t t-set="invoices" t-value="[i for i in order.invoice_ids if i.state not in ['draft', 'cancel']]"/>
+                          <t t-if="invoices">
+                            <div>
+                              <strong>Invoices</strong>
+                            </div>
+                            <div>
+                              <t t-foreach="invoices" t-as="i">
+                                <t t-set="report_url" t-value="'/report/pdf/account.report_invoice/%s' % i.id"/>
+                                <div>
+                                  <a t-att-href="report_url"><span class="fa fa-download"/></a>
+                                  <a t-att-href="report_url"><span t-esc="i.number"/></a>
+                                  <span class="text-muted" t-field="i.date_invoice"/>
+                                  <t t-if="i.state == 'paid'">
+                                    <span class="label label-success orders_label_text_align"><i class="fa fa-fw fa-check"/> Paid</span>
+                                  </t>
+                                  <t t-if="i.state != 'paid'">
+                                    <span class="label label-info orders_label_text_align"><i class="fa fa-fw fa-clock-o"/> Waiting</span>
+                                  </t>
+                                </div>
+                              </t>
+                            </div>
+                          </t>
+                        </div>
+                        
+                        <div id="shipping_address" class="col-md-6">
+                          <div>
+                            <strong>Shipping Address</strong>
+                          </div>
+                          <div>
+                            <address t-field="order.partner_shipping_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
+                          </div>
+                        </div>
+                      </div>
+
+                      <hr/>
+
+                      <div class="row">
+                        <div class="col-md-6">
+                          <strong>Product</strong>
+                        </div>
+                        <div class="col-md-2 text-right">
+                          <strong>Unit Price</strong>
+                        </div>
+                        <div class="col-md-2 text-right">
+                          <strong>Quantity</strong>
+                        </div>
+                        <div class="col-md-2 text-right">
+                          <strong>Subtotal</strong>
+                        </div>
+                      </div>
+                      <t t-foreach="order.order_line" t-as="ol">
+                        <div class="row orders_vertical_align">
+                            <div class="col-md-1 text-center">
+                                <img t-att-src="'/web/image/product.product/%s/image_small/48x48' % ol.product_id.id"/>
+                            </div>
+                            <div id='product_name' class="col-md-5">
+                              <span t-esc="ol.product_id.name"/>
+                            </div>
+                          <div class="col-md-2 text-right">
+                            <span t-field="ol.price_unit" t-options='{"widget": "monetary", "display_currency": order.pricelist_id.currency_id}'/>
+                          </div>
+                          <div class="col-md-2 text-right">
+                            <t t-if="ol._name == 'sale.order.line'">
+                              <span t-esc="ol.product_uom_qty"/>
+                            </t>
+                            <t t-if="ol._name == 'account.invoice.line'">
+                              <span t-esc="ol.quantity"/>
+                            </t>
+                          </div>
+                          <div class="col-md-2 text-right">
+                            <span t-field="ol.price_subtotal" t-options='{"widget": "monetary", "display_currency": order.pricelist_id.currency_id}'/>
+                          </div>
+                        </div>
+                      </t>
+
+                      <hr/>
+
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div>
+                            <strong>Contact</strong>
+                          </div>
+                          <div t-field="order.user_id.partner_id" t-options='{"widget": "contact", "fields": ["email", "phone"]}'/>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="row">
+                            <div class="col-md-10 text-right">
+                              Untaxed Amount:
+                            </div>
+                            <div class="col-md-2 text-right">
+                              <span t-field="order.amount_untaxed" t-options='{"widget": "monetary", "display_currency": order.pricelist_id.currency_id}'/>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-10 text-right">
+                              Taxes:
+                            </div>
+                            <div class="col-md-2 text-right">
+                              <span t-field="order.amount_tax" t-options='{"widget": "monetary", "display_currency": order.pricelist_id.currency_id}'/>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-10 text-right">
+                              <strong>Total:</strong>
+                            </div>
+                            <div class="col-md-2 text-right">
+                              <strong><span t-field="order.amount_total" t-options='{"widget": "monetary", "display_currency": order.pricelist_id.currency_id}'/></strong>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+              </div>
+              <div class="oe_structure mb32"/>
+          </div>
+        </div>
+      </t>
+    </template>
+    
+    
+    
+    
+    
+    <template id="website_sale.confirmation">
+        <t t-call="website.layout">
+            <t t-set="additional_title">Shop - Confirmed</t>
+            <div id="wrap">
+                <div class="container oe_website_sale">
+                    <t t-call="website_sale.wizard_checkout">
+                        <t t-set="step" t-value="50" />
+                    </t>
+                    <h1 class="mb32">Order <em t-field="order.name" /> Confirmed</h1>
+                    <div class="row">
+                        <div class="col-lg-8 col-sm-9">
+                            <div class="thanks_msg">
+                                <h2>Thank you for your order.
+                                          <a class="btn btn-primary pull-right" href="/shop/print" target="_blank"><i class="fa fa-print"></i> Print
+                                          </a></h2>
+                                <div class="oe_website_sale_tx_status" t-att-data-order-id="order.id"></div>
+                            </div>
+                            <div class="oe_cart">
+                                <h3 class="mt32 text-left">
+                                    <strong>Order Details:</strong>
+                                </h3>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Products</th>
+                                            <th>Quantity</th>
+                                            <th class="text-right" width="100">Unit Price</th>
+                                            <th class="text-right" width="100">Subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr t-foreach="order.order_line" t-as="line">
+                                          <td>
+                                              <div>
+                                                  <a t-attf-href="/shop/product/#{ slug(line.product_id.product_tmpl_id) }">
+                                                      <strong t-esc="line.product_id.with_context(display_default_code=False).display_name"/>
+                                                  </a>
+                                              </div>
+                                              <div class="text-muted">
+                                                  <t t-foreach="line.name.splitlines()[1:]" t-as="name_line">
+                                                      <span><t t-esc="name_line"/></span><br/>
+                                                  </t>
+                                              </div>
+                                          </td>
+                                          <td>
+                                              <div id="quote_qty">
+                                                  <span t-field="line.product_uom_qty"/>
+                                                  <span t-field="line.product_uom"/>
+                                              </div>
+                                          </td>
+                                          <td>
+                                              <span class="text-right">
+                                                  <div t-field="line.price_unit"
+                                                      t-options='{"widget": "monetary", "display_currency": order.pricelist_id.currency_id}'/>
+                                              </span>
+                                          </td>
+                                          <td>
+                                              <div class="text-right"
+                                                  t-field="line.price_subtotal"
+                                                  t-options='{"widget": "monetary", "display_currency": order.pricelist_id.currency_id}'/>
+                                          </td>
+                                      </tr>
+                                    </tbody>
+                                    <tfooter>
+                                      <tr>
+                                          <td colspan="2"></td>
+                                          <td class="text-right">Subtotal:</td>
+                                          <td class="text-right">
+                                              <span t-field="order.amount_untaxed" style="white-space: nowrap;" t-options="{'widget': 'monetary','from_currency': order.pricelist_id.currency_id,'display_currency': website.currency_id}" />
+                                          </td>
+                                      </tr>
+                                      <tr>
+                                          <td class='noborder' colspan="2"></td>
+                                          <td class="text-right noborder">Taxes:</td>
+                                          <td class="text-right noborder">
+                                               <span t-field="order.amount_tax" style="white-space: nowrap;" t-options="{'widget': 'monetary', 'from_currency': order.pricelist_id.currency_id, 'display_currency': website.currency_id}" />
+                                          </td>
+                                      </tr>
+                                      <tr>
+                                          <td class='noborder' colspan="2"></td>
+                                          <td class="text-right"><strong>Total:</strong></td>
+                                          <td class="text-right">
+                                              <strong t-field="order.amount_total"
+                                                  t-options='{"widget": "monetary", "display_currency": order.pricelist_id.currency_id}'/>
+                                          </td>
+                                      </tr>
+                                  </tfooter>
+                                </table>
+                                
+                                
+                                <div class="clearfix" />
+                                <div class="oe_structure" />
+                                <h3 class="text-left hidden" >
+                                    <strong>Payment information:</strong>
+                                </h3>
+                                <table class="table  hidden">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="2">
+                                                <strong>Payment Method:</strong>
+                                                <t t-esc="order.payment_acquirer_id.name" />
+                                            </td>
+                                            <td class="text-right" width="100">
+                                                <strong>Total:</strong>
+                                            </td>
+                                            <td class="text-right" width="100">
+                                                <strong t-field="order.amount_total" t-options="{'widget': 'monetary', 'display_currency': order.pricelist_id.currency_id}" />
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="haugathem hidden">
+                                	<t t-call="website_sale.payment_confirmation_status" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-lg-offset-1 col-sm-3 text-muted">
+                            <t t-call='website_sale.bill_to'>
+                                <t t-set="order" t-value= "order"/>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+                <div class="oe_structure" />
+            </div>
+        </t>
+    </template>
+    
+    
+    
+    
+    
+    
     
 </odoo>

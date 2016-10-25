@@ -7,9 +7,11 @@
     'author': 'HauTran!',
     'category': 'Accounting',
     'website': 'https://www.google.com.vn',
-    'depends' : ['website_sale'],
+    'depends' : ['website_sale', "website_portal"],
     'data': [
+             #'views/sale_order.xml',
              'views/template.xml',
+             'views/report.xml',
     ],
     #'qweb': [
     #    "static/src/xml/shop_backend.xml",
