@@ -3,9 +3,6 @@
     <template id="report_shop_saleorder_document" inherit_id="website_sale.report_shop_saleorder_document">
         <xpath expr="//t[@t-if='doc.payment_acquirer_id.name']" position="replace" />
     </template>
-    
-    
-	
 	    
 	<template id="qoha_report_saleorder_document" inherit_id="sale.report_saleorder_document">
 		<xpath expr="//strong[@t-if='doc.partner_shipping_id == doc.partner_invoice_id']" position="replace" />
@@ -17,7 +14,7 @@
              <div t-if="doc.partner_shipping_id == doc.partner_invoice_id" class="mt8">
              	<strong>Shipping address:</strong>
              	<div t-field="doc.partner_invoice_id"
-             		t-options='{"widget": "contact", "fields": ["address", "name", "phone", "fax"], "no_marker": True, "phone_icons": True}'>
+             		t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'>
              	</div>
              </div>
 		</xpath>

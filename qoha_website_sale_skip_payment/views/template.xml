@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<!-- Test -->
+
+    <!-- Report PDF -->
+	<template inherit_id="sale.report_saleorder_document" id="report_saleorder_document">
+		<xpath expr="//strong[@t-if='doc.partner_shipping_id == doc.partner_invoice_id']" position="replace">
+			<strong t-if="doc.partner_shipping_id == doc.partner_invoice_id">Shipping address:</strong>
+		</xpath>
+		
+		<xpath expr="//div[@t-field='doc.partner_invoice_id']" position="replace">
+			<!-- 
+			<div class="hidden" t-field="doc.partner_invoice_id"
+                        t-options='{"widget": "contact", "fields": ["address", "name", "phone", "fax"], "no_marker": True, "phone_icons": True}'/>
+            -->	
+		</xpath>
+		
+       <xpath expr="//p[@t-if='doc.partner_id.vat']" position="replace">
+       		<!-- 
+       		<p t-if="doc.partner_id.vat" class="hidden">VAT: <span t-field="doc.partner_id.vat"/></p>
+       		 -->
+       </xpath>
+       
+       <xpath expr="//div[@name='payment_term']" position="replace" />
+       
+       <xpath expr="//p[@t-if='doc.payment_term_id.note']" position="replace"/>
+       
+	</template>
+
+	
+	<template id="report_shop_saleorder_document" inherit_id="website_sale.report_shop_saleorder_document">
+		<xpath expr="//t[@t-if='doc.payment_acquirer_id.name']" position="replace">
+		
+		</xpath>
+	</template>
+
+
+ 
+
+    
+    <template id='bill_to' inherit_id='website_sale.bill_to' name="Bill to">
+    	<xpath expr="//div[@class='panel panel-info']" position="attributes">
+    		<attribute name="class">panel panel-info hidden</attribute>
+    	</xpath>
+    </template>
+    
+    
+    <template id="sale_address" inherit_id="website_sale.address">
+    	<xpath expr="//form[@name='/shop/checkout']/div[last()]/a[1]" position="replace">
+    		<a t-att-href="mode == ('new', 'billing') and '/shop/cart' or '/shop/cart'" class="btn btn-default mb32">
+                 <span class="fa fa-long-arrow-left" /> Back
+             </a>
+    	</xpath>
+    </template>
+    
+    
+    <template id="wizard_checkout" inherit_id="website_sale.wizard_checkout" name="Wizard Checkout">
+    	<xpath expr="//li[@id='step40']" position="replace" />
+    </template>
+	
+    <template id="confirmation" inherit_id="website_sale.confirmation">
+    	<xpath expr="//div[@class='oe_cart']/h3[2]" position="replace" />
+    	<xpath expr="//div[@class='oe_cart']/table[2]" position="replace" />
+    	<xpath expr="//t[@t-call='website_sale.payment_confirmation_status']" position="replace" />
+    </template>
+    
+    
+    
+    <template id="orders_followup" inherit_id="website_portal_sale.orders_followup" name="Sales Order">
+    	<xpath expr="//div[@class='panel-body']/div[@class='row']/div[1]" position="replace"/>
+    	<xpath expr="//div[@class='panel-body']/div[@class='mb8']" position="replace" />
+    	<xpath expr="//span[@t-esc='order.name']" position="after">
+    		<div class="pull-right">
+    			<strong>Order Date:</strong> <span t-field="order.create_date" t-options='{"widget": "date"}'/>
+            </div>
+    	</xpath>
+    	<xpath expr="//address[@t-field='order.partner_shipping_id']" position="replace">
+    		<!-- 
+				<address t-field="order.partner_shipping_id" 
+						t-options='{"widget": "contact", "fields": ["address", "name", "email"], "no_marker": True}'/>
+			-->
+                <div t-field="order.partner_shipping_id" t-options="{'widget': 'contact','fields': ['address', 'name', 'phone','email']}" />
+    	</xpath>
+    </template>
+	
+</odoo>

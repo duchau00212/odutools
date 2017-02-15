@@ -1,3 +1,9 @@
 <odoo>
 	
+    <template id="wizard_checkout" inherit_id="website_sale.wizard_checkout" name="Wizard Checkout">
+    	<xpath expr="//li[@id='step40']" position="replace">
+    		
+    	</xpath>
+    </template>
+	
 </odoo>
