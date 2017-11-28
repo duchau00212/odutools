@@ -1,0 +1,14 @@
+.faviours_public_extention {
+    /*margin-top: 14px;*/
+    /*margin-bottom: 16px;*/
+    /*background-color: #b18e8e;*/
+    width: 100%;
+    /*min-height: 40px;*/
+}
+
+li.favious-private.selected,
+li.favious-public.selected {
+    background-color: white !important;
+    border: 1px solid #dddddd !important;
+}
+

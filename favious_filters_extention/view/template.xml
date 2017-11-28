@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data>
+<template id="assets_backend" name="website assets for backend" inherit_id="web.assets_backend">
+	    <xpath expr="." position="inside">
+	        <script type="text/javascript" src="/favious_filters_extention/static/js/script.js"></script>    
+	        <link rel="stylesheet" type="text/css" href="/favious_filters_extention/static/css/style.css"/>
+	    </xpath>
+	</template> 
+</data>

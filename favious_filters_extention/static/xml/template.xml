@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="faviours_template" xml:space="preserve" >
+	<t t-extend="ControlPanel">
+	    <t t-jquery="div.o_cp_right" t-operation="after">
+	        
+	    </t>
+	</t>
+	
+	<div t-name="favious_filters_extention.FavoriteMenu_extention" class="faviours_public_extention">
+        <div class='oe_clear' />
+        <div class='faviours_public_extention_div o_notebook'>
+		   <ul role="tablist" class="nav nav-tabs o_favorites_public_extention">
+		   	<li class='divider hidden'></li>
+	        <!-- 
+	            <li class="">
+	                <a data-toggle="tab" disable_anchor="true" role="tab" href="#notebook_page_13" aria-expanded="false">A1</a>
+	            </li><li class="active">
+	                <a data-toggle="tab" disable_anchor="true" role="tab" href="#notebook_page_14" aria-expanded="true">B2</a>
+	            </li>
+	            -->
+	        </ul>
+        </div>
+	</div>
+	
+</templates>

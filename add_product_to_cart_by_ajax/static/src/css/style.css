@@ -1,0 +1,14 @@
+div#my_cart_review_contend { 
+    overflow-x: hidden;
+    overflow-y: scroll;
+    height: 375px;
+}
+
+#cart_review{
+	padding-top: 48px !important;
+}
+
+div#my_cart_review_contend .cart_line {
+    border-bottom: #e5e5e5 solid 1px;
+    
+}

@@ -5,6 +5,7 @@
     'summary': 'Add product to Cart by Ajax',
     'description': """""",
     'category': 'Accounting',
+    'author': 'Hauga',
     'website': 'https://www.google.com.vn',
     'depends' : ['website_sale'],
     'data': [

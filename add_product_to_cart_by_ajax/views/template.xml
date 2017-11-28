@@ -1,12 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+	<template id="form_cart_review">
+	  <!-- Modal -->
+		<div class="modal fade" id="cart_review" role="dialog">
+		    <div class="modal-dialog "> <!-- modal-lg -->
+		      <div class="modal-content">
+		        <div class="modal-header">
+		          <button type="button" class="close" data-dismiss="modal">x</button>
+		          <h4 class="modal-title"><a href="/shop/cart">My Cart</a></h4>
+		        </div>
+		        <div class="modal-body">
+		        	<div id="my_cart_review_contend">
+		        	
+		        	</div>
+		        	<!-- Cart Contend -->		        	
+		        </div>
+		        
+		        <!-- 
+		        <div class="modal-footer">
+		        	<div class="pull-right">
+			          	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			          	<button type="submit" class="btn btn-primary">Submit</button>
+	          		</div>
+		        </div>
+		         -->
+		      </div>
+		    </div>
+		  </div>
+	</template>
+
     <template id="assets_frontend" inherit_id="website.assets_frontend" name="Shop">
         <xpath expr="." position="inside">
-            <script type="text/javascript" src="/add_product_to_cart_by_ajax/static/src/js/website_sale_tracking.js"></script>
+            <script type="text/javascript" src="/add_product_to_cart_by_ajax/static/src/js/website_sale_tracking.js" />
+            <link rel="stylesheet" type="text/css" href="/add_product_to_cart_by_ajax/static/src/css/style.css" />
         </xpath>
     </template>
     
-    
+    <template id="layout" inherit_id="website.layout" name="Layout">
+        <xpath expr="//div[@id='wrapwrap']" position="after">
+        	<t t-call="add_product_to_cart_by_ajax.form_cart_review" />
+        </xpath>
+    </template>
     
     <template id="website_sale.products_add_to_cart"  inherit_id="website_sale.products_item" active="False" customize_show="True" name="Add to Cart">
     	 
